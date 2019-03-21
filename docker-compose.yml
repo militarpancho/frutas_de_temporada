@@ -1,0 +1,32 @@
+version: '2'
+
+volumes:
+  pgdata: 
+networks:
+  api_fruits_net: 
+    external:
+      name: api_fruits_net
+services:
+  postgresql:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_PASSWORD: $PG_PASS
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init_db.sql:/usr/local/share/init_db.sql
+    restart: always
+    networks:
+      - api_fruits_net
+  flask_api:
+    depends_on: 
+      - postgresql
+    build : api/
+    volumes:
+      - ./api:/usr/src/app
+    ports:
+      - 5000:5000
+    environment:
+      PG_PASS: $PG_PASS
+    restart: always
+    networks:
+      - api_fruits_net
