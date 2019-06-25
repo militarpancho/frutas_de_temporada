@@ -17,5 +17,18 @@ def get_month_fruits():
 def getMonths(fruit=None):
     return jsonify(fruits_DB.getMonths_of_fruit(fruit))
 
+@app.route('/getTeas/<tea>')
+def getTea(tea=None):
+    with open('teas.csv', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        i = next(spamreader)
+        response = dict((ik,0) for ik in i)
+        for row in spamreader:
+            if row[0] == tea:
+                for index, ik in enumerate(i):
+                    response[ik] = row[index]
+            else:
+                continue
+    return jsonify(response)  
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=int(PORT))
+    app.run(debug=False, host='0.0.0.0', port=int(PORT))
